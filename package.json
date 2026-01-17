@@ -3,6 +3,6 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "@anusha/linkedin-notifications": "github:anushalihala/linkedin_notifications"
+    "@anusha/linkedin-notifications": "git+https://github.com/anushalihala/linkedin_notifications.git"
   }
 }
