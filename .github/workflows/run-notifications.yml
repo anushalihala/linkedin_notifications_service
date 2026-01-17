@@ -40,6 +40,11 @@ jobs:
           echo "Using GIT_URL: ${GIT_URL:0:40}..."
           git ls-remote "$GIT_URL" 2>&1 || echo "Failed with PAT"
 
+          echo "Testing with PAT with oauth:"
+          GIT_URL="https://$GH_PAT:x-oauth-basic@github.com/anushalihala/linkedin_notifications.git"
+          echo "Using GIT_URL: ${GIT_URL:0:10}..."
+          git ls-remote "$GIT_URL" 2>&1 || echo "Failed with PAT with oauth"
+
       - name: Install notifications library
         run: |
           env:
