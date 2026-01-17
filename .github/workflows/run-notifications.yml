@@ -6,7 +6,7 @@ on:
       job_url:
         description: 'LinkedIn jobs search URL'
         required: true
-        default: 'https://www.linkedin.com/jobs/search/?keywords=AI&location=United%20States'
+        default: 'https://www.linkedin.com/jobs/search/?f_TPR=r3600&f_WT=2&geoId=92000000&keywords=AI&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD'
   schedule:
     # Run hourly at the 40th minute
     - cron: '0 * * * *'
