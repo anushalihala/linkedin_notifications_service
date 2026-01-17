@@ -1,0 +1,43 @@
+name: LinkedIn Job Scraper
+
+on:
+  workflow_dispatch:
+    inputs:
+      job_url:
+        description: 'LinkedIn jobs search URL'
+        required: true
+        default: 'https://www.linkedin.com/jobs/search/?keywords=AI&location=United%20States'
+  schedule:
+    # Run hourly at the 0th minute
+    - cron: '0 * * * *'
+
+jobs:
+  fetch-jobs:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run LinkedIn job scraper
+        env:
+          LINKEDIN_JOB_URL: ${{ github.event.inputs.job_url || secrets.LINKEDIN_JOB_URL || 'https://www.linkedin.com/jobs/search/?keywords=AI&location=United%20States' }}
+          LINKEDIN_LI_AT: ${{ secrets.LINKEDIN_LI_AT }}
+          LINKEDIN_JSESSIONID: ${{ secrets.LINKEDIN_JSESSIONID }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          LOG_LEVEL: ${{ secrets.LOG_LEVEL }}
+          BATCH_CHUNK_SIZE: ${{ secrets.BATCH_CHUNK_SIZE }}
+        run: npm run start
+
