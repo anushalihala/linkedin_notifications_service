@@ -47,6 +47,8 @@ jobs:
           fi
 
       - name: Debug Git configuration
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
         run: |
           echo "Current git config for GitHub:"
           git config --global --get-regexp 'url.*github' || echo "No GitHub URL config found"
@@ -56,10 +58,8 @@ jobs:
           
           echo "Testing with PAT:"
           GIT_URL="https://x-access-token:$GH_PAT@github.com/anushalihala/linkedin_notifications.git"
-          echo "Using GIT_URL: ${GIT_URL:0:25}..."
+          echo "Using GIT_URL: ${GIT_URL:0:40}..."
           git ls-remote "$GIT_URL" 2>&1 || echo "Failed with PAT"
-        env:
-          GH_PAT: ${{ secrets.GH_PAT }}
 
       - name: Install dependencies
         run: npm ci
