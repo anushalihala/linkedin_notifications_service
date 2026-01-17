@@ -32,19 +32,31 @@ jobs:
           GH_PAT: ${{ secrets.GH_PAT }}
         run: |
           if [ -n "$GH_PAT" ]; then
-            # Configure git to use PAT for all GitHub URLs
+            echo "Found GH_PAT"
+            # Remove any existing credential helpers
+            git config --global --unset credential.helper || true
+            
+            # Replace all GitHub URL patterns with PAT authentication
             git config --global url."https://x-access-token:${GH_PAT}@github.com/".insteadOf "ssh://git@github.com/"
             git config --global url."https://x-access-token:${GH_PAT}@github.com/".insteadOf "git@github.com:"
             git config --global url."https://x-access-token:${GH_PAT}@github.com/".insteadOf "https://github.com/"
             
-            # Configure npm
-            echo "//npm.pkg.github.com/:_authToken=${GH_PAT}" >> ~/.npmrc
-            echo "//github.com/:_authToken=${GH_PAT}" >> ~/.npmrc
-            echo "always-auth=true" >> ~/.npmrc
-            
-            # Verify git config
-            git config --global --get-regexp url.*insteadof
+            # Also configure npm to use git+https
+            npm config set git-tag-version false
           fi
+
+      - name: Debug Git configuration
+        run: |
+          echo "Current git config for GitHub:"
+          git config --global --get-regexp 'url.*github' || echo "No GitHub URL config found"
+          
+          echo "Testing git access:"
+          git ls-remote "https://github.com/anushalihala/linkedin_notifications.git" 2>&1 || echo "Failed to access repo"
+          
+          echo "Testing with PAT:"
+          git ls-remote "https://x-access-token:$GH_PAT@github.com/anushalihala/linkedin_notifications.git" 2>&1 || echo "Failed with PAT"
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
 
       - name: Install dependencies
         run: npm ci
