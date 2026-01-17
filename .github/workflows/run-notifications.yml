@@ -9,7 +9,7 @@ on:
         default: 'https://www.linkedin.com/jobs/search/?keywords=AI&location=United%20States'
   schedule:
     # Run hourly at the 40th minute
-    - cron: '40 * * * *'
+    - cron: '0 * * * *'
 
 jobs:
   fetch-jobs:
