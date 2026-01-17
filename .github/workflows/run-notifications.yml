@@ -8,7 +8,7 @@ on:
         required: true
         default: 'https://www.linkedin.com/jobs/search/?keywords=AI&location=United%20States'
   schedule:
-    # Run hourly at the 40th minute
+    # Run hourly at the 0 minute
     - cron: '0 * * * *'
 
 jobs:
@@ -27,35 +27,13 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Debug Git configuration
+      - name: Install dependencies
+        # We inject the PAT into the git URL config just for this command
+        run: |
+          git config --global url."https://x-access-token:${{ secrets.GH_PAT }}@github.com/".insteadOf "https://github.com/"
+          npm install
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
-        run: |
-          echo "Current git config for GitHub:"
-          git config --global --get-regexp 'url.*github' || echo "No GitHub URL config found"
-          
-          echo "Testing git access:"
-          git ls-remote "https://github.com/anushalihala/linkedin_notifications.git" 2>&1 || echo "Failed to access repo"
-          
-          echo "Testing with PAT:"
-          GIT_URL="https://x-access-token:$GH_PAT@github.com/anushalihala/linkedin_notifications.git"
-          echo "Using GIT_URL: ${GIT_URL:0:40}..."
-          git ls-remote "$GIT_URL" 2>&1 || echo "Failed with PAT"
-
-          echo "Testing with PAT with oauth:"
-          GIT_URL="https://$GH_PAT:x-oauth-basic@github.com/anushalihala/linkedin_notifications.git"
-          echo "Using GIT_URL: ${GIT_URL:0:10}..."
-          git ls-remote "$GIT_URL" 2>&1 || echo "Failed with PAT with oauth"
-
-      - name: Install notifications library
-        run: |
-          env:
-            GH_PAT: ${{ secrets.GH_PAT }}
-          npm install git+https://x-access-token:$GH_PAT@github.com/anushalihala/linkedin_notifications.git
-
-
-      - name: Install other dependencies
-        run: npm ci
 
       - name: Run LinkedIn job scraper
         env:
@@ -68,5 +46,4 @@ jobs:
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           LOG_LEVEL: ${{ secrets.LOG_LEVEL }}
           BATCH_CHUNK_SIZE: ${{ secrets.BATCH_CHUNK_SIZE }}
-        run: npm run start
-
+        run: npm start
