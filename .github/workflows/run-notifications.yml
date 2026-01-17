@@ -50,6 +50,12 @@ jobs:
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
         run: |
+          # First verify PAT works with GitHub API
+          echo "=== Testing PAT with GitHub API ==="
+          curl -H "Authorization: token $GH_PAT" \
+              -H "Accept: application/vnd.github.v3+json" \
+              https://api.github.com/repos/anushalihala/linkedin_notifications
+              
           echo "Current git config for GitHub:"
           git config --global --get-regexp 'url.*github' || echo "No GitHub URL config found"
           
