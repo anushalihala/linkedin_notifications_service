@@ -6,7 +6,8 @@ on:
       job_url:
         description: 'LinkedIn jobs search URL'
         required: true
-        default: 'https://www.linkedin.com/jobs/search/?keywords=AI&location=United%20States'
+        default: 'https://www.linkedin.com/jobs/search/?f_TPR=r3600&f_WT=2&geoId=92000000&keywords=AI&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD'
+
   schedule:
     # Run hourly at the 0 minute
     - cron: '0 * * * *'
@@ -37,7 +38,7 @@ jobs:
 
       - name: Run LinkedIn job scraper
         env:
-          LINKEDIN_JOB_URL: ${{ github.event.inputs.job_url || secrets.LINKEDIN_JOB_URL || 'https://www.linkedin.com/jobs/search/?keywords=AI&location=United%20States' }}
+          LINKEDIN_JOB_URL: ${{ github.event.inputs.job_url || secrets.LINKEDIN_JOB_URL || 'https://www.linkedin.com/jobs/search/?f_TPR=r3600&f_WT=2&geoId=92000000&keywords=AI&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD' }}
           LINKEDIN_LI_AT: ${{ secrets.LINKEDIN_LI_AT }}
           LINKEDIN_JSESSIONID: ${{ secrets.LINKEDIN_JSESSIONID }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
