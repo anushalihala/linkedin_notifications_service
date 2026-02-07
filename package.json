@@ -3,6 +3,7 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "@anusha/linkedin-notifications": "git+https://github.com/anushalihala/linkedin_notifications.git"
+    "@anusha/linkedin-notifications": "git+https://github.com/anushalihala/linkedin_notifications.git",
+    "firebase": "^12.9.0"
   }
 }
