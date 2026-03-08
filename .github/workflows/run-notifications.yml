@@ -66,4 +66,5 @@ jobs:
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           LOG_LEVEL: ${{ secrets.LOG_LEVEL }}
           BATCH_CHUNK_SIZE: ${{ secrets.BATCH_CHUNK_SIZE }}
+          MAIL_TRACK_SECRET: ${{ secrets.MAIL_TRACK_SECRET }}
         run: npm start
