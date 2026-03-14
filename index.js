@@ -5,7 +5,7 @@ const { getFirestore } = require("firebase-admin/firestore");
 
 const db = getFirestore();
 
-const SEQUENTIAL = false;
+const SEQUENTIAL = true;
 
 async function run() {
   try {
