@@ -5,14 +5,20 @@ const { getFirestore } = require("firebase-admin/firestore");
 
 const db = getFirestore();
 
-db.collection("users")
-  .where("enabled", "==", true)
-  .get()
-  .then((snapshot) => {
-    const notificationPromises = [];
+const SEQUENTIAL = false;
+
+async function run() {
+  try {
+    const snapshot = await db
+      .collection("users")
+      .where("enabled", "==", true)
+      .get();
+
+    console.log(snapshot.size, "enabled users")
+
+    const jobs = [];
 
     snapshot.forEach((doc) => {
-      console.log("####################  USER: ", doc.id);
       const data = doc.data();
 
       if (
@@ -22,14 +28,14 @@ db.collection("users")
         !data.notification_email
       ) {
         console.log(
-          "####################  USER: ",
+          "#################### USER:",
           doc.id,
-          " has no linkedin_job_url, filter_config, or questions",
+          "missing linkedin_job_url, filter_config, questions, or email"
         );
         return;
       }
 
-      notificationPromises.push(
+      const job = () =>
         getLinkedinNotifications({
           runFounderAnalysis: false,
           jobUrl: data.linkedin_job_url,
@@ -37,13 +43,32 @@ db.collection("users")
           questions: data.questions,
           userEmail: data.notification_email,
           userId: doc.id,
-        }),
-      );
+        });
+
+      jobs[doc.id] = job;
     });
 
-    return Promise.all(notificationPromises);
-  })
-  .catch((err) => {
+    console.log(`Processing ${jobs.length} users`);
+    console.log(`Mode: ${SEQUENTIAL ? "SEQUENTIAL" : "PARALLEL"}`);
+
+    if (SEQUENTIAL) {
+      for (const [id, job] of Object.entries(jobs)) {
+        console.log("#################### USER:", id);
+        await job();
+      }
+    } else {
+      await Promise.all(Object.entries(jobs).map((jobData) => {
+        const [id, job] = jobData
+        console.log("#################### USER:", id);
+        job()
+      }));
+    }
+
+    console.log("All users processed ✅");
+  } catch (err) {
     console.error("Error running linkedin notifications:", err);
     process.exitCode = 1;
-  });
+  }
+}
+
+run();
