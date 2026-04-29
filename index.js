@@ -48,7 +48,6 @@ async function run() {
       jobs[doc.id] = job;
     });
 
-    console.log(`Processing ${jobs.length} users`);
     console.log(`Mode: ${SEQUENTIAL ? "SEQUENTIAL" : "PARALLEL"}`);
 
     if (SEQUENTIAL) {
